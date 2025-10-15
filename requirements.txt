@@ -1,0 +1,40 @@
+# Core dependencies
+torch==2.3.1
+torchvision==0.18.1
+torchaudio==2.3.1
+torch-geometric==2.5.3
+torch-scatter==2.1.2
+torch-sparse==0.6.18
+torch-cluster==1.6.3
+torch-spline-conv==1.2.2
+
+# Data processing
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.1
+scikit-learn==1.4.2
+tqdm==4.54.1
+PyYAML
+matplotlib
+seaborn
+
+# Geospatial and trajectory-related packages (if used)
+geopy==2.4.1
+geopandas==1.0.1
+shapely==2.0.6
+osmnx==2.0.1
+pyproj==3.7.0
+
+# Visualization and logging
+tensorboard==2.18.0
+
+# Optional: model utilities
+transformers==4.41.2
+huggingface-hub==0.23.3
+accelerate==1.1.1
+
+# Miscellaneous
+requests==2.31.0
+joblib==1.4.0
+regex
+protobuf==3.20.3
