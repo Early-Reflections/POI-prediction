@@ -1,4 +1,7 @@
 # Core dependencies
+--extra-index-url https://download.pytorch.org/whl/cu121
+--find-links https://data.pyg.org/whl/torch-2.3.1+cu121.html
+
 torch==2.3.1
 torchvision==0.18.1
 torchaudio==2.3.1
