@@ -6,12 +6,28 @@ import torch
 import pandas as pd
 import random
 import argparse
+from torch.utils.tensorboard import SummaryWriter
 from preprocess import preprocess
 from utils import seed_torch, set_logger, Cfg, count_parameters, test_step, visualize_channel_weight, visualize_step
 from layer import NeighborSampler
 from dataset import LBSNDataset
 from model import STHGCN, SequentialTransformer
 from tqdm import tqdm
+
+
+def _find_latest_checkpoint_dir(dataset_name: str):
+    base = 'tensorboard'
+    if not osp.isdir(base):
+        return None
+    candidates = []
+    for ts in os.listdir(base):
+        d = osp.join(base, ts, dataset_name)
+        if osp.isfile(osp.join(d, 'checkpoint.pt')):
+            candidates.append(d)
+    if not candidates:
+        return None
+    candidates.sort(key=lambda p: osp.getmtime(p), reverse=True)
+    return candidates[0]
 
 
 
@@ -189,8 +205,11 @@ if __name__ == '__main__':
     if cfg.run_args.do_test:
         logging.info('[Evaluating] Start evaluating on test set...')
 
-        checkpoint = torch.load(osp.join(cfg.run_args.init_checkpoint, 'checkpoint.pt'))
-        logging.info(f'[Evaluating] Load checkpoint from {cfg.run_args.init_checkpoint}')
+        ckpt_dir = cfg.run_args.init_checkpoint or _find_latest_checkpoint_dir(cfg.dataset_args.dataset_name)
+        if ckpt_dir is None:
+            raise FileNotFoundError("No checkpoint found. Set run_args.init_checkpoint in YAML or train a model first.")
+        checkpoint = torch.load(osp.join(ckpt_dir, 'checkpoint.pt'))
+        logging.info(f'[Evaluating] Load checkpoint from {ckpt_dir}')
         model.load_state_dict(checkpoint['model_state_dict'])
         # recall_res, ndcg_res, map_res, mrr_res, loss, valid_indices, class_correct, class_total, class_accuracy= test_step(model, sampler_test)
 
@@ -216,11 +235,17 @@ if __name__ == '__main__':
         # # write valid_indices, class_correct, class_total, class_accuracy into csv file
         # df = pd.DataFrame({'valid_indices': valid_indices, 'class_correct': class_correct, 'class_total': class_total, 'class_accuracy': class_accuracy})
         # # write the label_count and original_label_count into csv file
-        # df['label_count'] = [label_count[k] for k in valid_indices]
-        # df['original_label_count'] = [original_label_count[k] for k in valid_indices]
 
-        # df.to_csv(osp.join(cfg.run_args.log_path, 'class_accuracy.csv'), index=False)
+    # df.to_csv(osp.join(cfg.run_args.log_path, 'class_accuracy.csv'), index=False)
 
-        # %% visulize the channel weight
-        attention_weights_0, attention_weights_1, attention_weights_2= visualize_step(model, sampler_test)
-        visualize_channel_weight([attention_weights_0, attention_weights_1, attention_weights_2], 'attention_weights')
+    # %% visualize the channel weight (only if requested)
+    if getattr(cfg.run_args, 'visualize', False):
+        attention_weights_0, attention_weights_1, attention_weights_2 = visualize_step(model, sampler_test)
+        writer = SummaryWriter(log_dir=cfg.run_args.log_path)
+        visualize_channel_weight(
+            [attention_weights_0, attention_weights_1, attention_weights_2],
+            writer,
+            epoch=0,
+            figure_names=['time_filter', 'traj2traj_l0', 'traj2traj_l1']
+        )
+        writer.close()
