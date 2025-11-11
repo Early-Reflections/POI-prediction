@@ -5,7 +5,9 @@ import torch
 import numpy as np
 import os.path as osp
 
-import matplotlib.pyplot as plt
+import matplotlib  # Use a non-interactive backend for headless/server environments
+matplotlib.use('Agg')  # Force Agg to avoid Tkinter main-loop errors during training/cleanup
+import matplotlib.pyplot as plt  # Import pyplot after backend selection
 import seaborn as sns
 
 from pathlib import Path
@@ -70,5 +72,6 @@ def visualize_channel_weight(batch_attention_weights_list, writer, epoch, figure
 
     # fig.show()
     # fig.savefig(osp.join(get_root_dir(), 'attention_weights.png'))
-    writer.add_figure(figure_name, fig, epoch)
+    writer.add_figure(figure_name, fig, epoch)  # Log figure to TensorBoard
+    plt.close(fig)  # Close the figure to free resources and prevent Tkinter warnings
 
