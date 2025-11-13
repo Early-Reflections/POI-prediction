@@ -20,8 +20,14 @@ python predict_user.py --user_id 123 -f best_conf/nyc.yml --gpu 0
 
 - **Print names (category labels)**
 
+venv
 ```bash
 python predict_user.py --user_id 123 -f best_conf/nyc.yml --names
+```
+
+docker
+```bash
+docker compose run --rm app python predict_user.py --user_id 123 -f best_conf/nyc.yml --names
 ```
 
 - **Use a specific checkpoint explicitly**

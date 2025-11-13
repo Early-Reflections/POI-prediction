@@ -25,6 +25,7 @@ def parse_args():
     parser.add_argument("--gpu", type=int, default=None, help="GPU index override; if not set, uses config's run_args.gpu")
     parser.add_argument("--all", action="store_true", help="Predict for all test samples of the user (default: only most recent)")
     parser.add_argument("--names", action="store_true", help="Also print category names inferred from raw data")
+    parser.add_argument("--gps", action="store_true", help="Also print GPS coordinates (lat, lon) inferred from raw data")
     return parser.parse_args()
 
 
@@ -113,17 +114,40 @@ def maybe_build_poi_name_lookup(root_dir: str, dataset_name: str):
                 df = pd.read_csv(fp)
         except Exception:
             continue
-        if 'PoiId' not in df.columns:
+        cols_lower = {c.lower(): c for c in df.columns}
+        # Find ID column (case-insensitive, support variants)
+        id_candidates = [
+            'poiid', 'poi_id', 'venueid', 'venue_id', 'id'
+        ]
+        id_col = None
+        for k in id_candidates:
+            if k in cols_lower:
+                id_col = cols_lower[k]
+                break
+        # Legacy exact match
+        if id_col is None and 'PoiId' in df.columns:
+            id_col = 'PoiId'
+        if id_col is None:
             continue
-        # Prefer human-readable category string if available
-        name_col = 'PoiCategoryName' if 'PoiCategoryName' in df.columns else None
-        if name_col is None and 'venueCategory' in df.columns:
-            name_col = 'venueCategory'
-        if name_col is None:
-            name_col = 'PoiCategoryId' if 'PoiCategoryId' in df.columns else None
+        # Prefer human-readable name; fall back to category string, then category id
+        name_candidates = [
+            'venue_name', 'venuename', 'name',
+            'poicatname', 'poi_catname', 'venuecategory',
+            'poicategoryname', 'poicategoryid'
+        ]
+        name_col = None
+        for k in name_candidates:
+            if k in cols_lower:
+                name_col = cols_lower[k]
+                break
+        # Legacy exact matches
+        if name_col is None and 'PoiCategoryName' in df.columns:
+            name_col = 'PoiCategoryName'
+        if name_col is None and 'PoiCategoryId' in df.columns:
+            name_col = 'PoiCategoryId'
         if name_col is None:
             continue
-        sub = df[['PoiId', name_col]].dropna()
+        sub = df[[id_col, name_col]].dropna()
         # Do not overwrite existing mapping; first occurrence wins
         for r in sub.itertuples(index=False):
             pid = r[0]
@@ -135,6 +159,81 @@ def maybe_build_poi_name_lookup(root_dir: str, dataset_name: str):
             if pid_py not in name_map:
                 name_map[pid_py] = str(r[1])
     return name_map if name_map else None
+
+
+def maybe_build_poi_gps_lookup(root_dir: str, dataset_name: str):
+    raw_dir = osp.join(root_dir, 'data', dataset_name, 'raw')
+    if not osp.isdir(raw_dir):
+        return None
+    import glob
+    paths = []
+    preferred = [
+        'NYC_train.csv', 'NYC_val.csv', 'NYC_test.csv',
+        'dataset_TSMC2014_TKY.txt',
+        'dataset_gowalla_ca_ne.csv'
+    ]
+    for p in preferred:
+        fp = osp.join(raw_dir, p)
+        if osp.isfile(fp):
+            paths.append(fp)
+    if not paths:
+        paths = glob.glob(osp.join(raw_dir, '*.csv')) + glob.glob(osp.join(raw_dir, '*.txt'))
+    if not paths:
+        return None
+    gps_map = {}
+    for fp in paths:
+        try:
+            if fp.endswith('.txt'):
+                df = pd.read_csv(fp, sep='\t', encoding='latin-1')
+            else:
+                df = pd.read_csv(fp)
+        except Exception:
+            continue
+        cols_lower = {c.lower(): c for c in df.columns}
+        id_candidates = ['poiid', 'poi_id', 'venueid', 'venue_id', 'id']
+        id_col = None
+        for k in id_candidates:
+            if k in cols_lower:
+                id_col = cols_lower[k]
+                break
+        if id_col is None and 'PoiId' in df.columns:
+            id_col = 'PoiId'
+        if id_col is None:
+            continue
+        lat_candidates = ['latitude', 'lat']
+        lon_candidates = ['longitude', 'lon', 'lng']
+        lat_col = None
+        lon_col = None
+        for k in lat_candidates:
+            if k in cols_lower:
+                lat_col = cols_lower[k]
+                break
+        for k in lon_candidates:
+            if k in cols_lower:
+                lon_col = cols_lower[k]
+                break
+        # Legacy exact matches
+        if lat_col is None and 'Latitude' in df.columns:
+            lat_col = 'Latitude'
+        if lon_col is None and 'Longitude' in df.columns:
+            lon_col = 'Longitude'
+        if lat_col is None or lon_col is None:
+            continue
+        sub = df[[id_col, lat_col, lon_col]].dropna()
+        for r in sub.itertuples(index=False):
+            pid = r[0]
+            try:
+                pid_py = pid.item()
+            except Exception:
+                pid_py = pid
+            if pid_py not in gps_map:
+                try:
+                    lat_v = float(r[1])
+                    lon_v = float(r[2])
+                except Exception:
+                    continue
+                gps_map[pid_py] = (lat_v, lon_v)
+    return gps_map if gps_map else None
 
 
 def main():
@@ -214,6 +313,7 @@ def main():
     # Optional: inverse map POI ids to original ids
     poi_classes, pad_id = maybe_load_poi_inverse_encoder(pre_path)
     name_map = maybe_build_poi_name_lookup(root, cfg.dataset_args.dataset_name) if args.names else None
+    gps_map = maybe_build_poi_gps_lookup(root, cfg.dataset_args.dataset_name) if args.gps else None
 
     print("=== Single-User Prediction ===")
     print(f"Dataset      : {cfg.dataset_args.dataset_name}")
@@ -277,6 +377,22 @@ def main():
                                     name = name_map.get(str(pid))
                             names.append(name)
                         print(f"  Top-{args.top_k} (names): {names}")
+                    if gps_map is not None:
+                        gps_coords = []
+                        for pid in pred_original:
+                            if pid is None:
+                                gps_coords.append(None)
+                                continue
+                            coord = gps_map.get(pid)
+                            if coord is None:
+                                try:
+                                    coord = gps_map.get(int(pid))
+                                except Exception:
+                                    pass
+                                if coord is None:
+                                    coord = gps_map.get(str(pid))
+                            gps_coords.append(coord)
+                        print(f"  Top-{args.top_k} (gps): {gps_coords}")
                     print(f"  Top-{args.top_k} (scores): {[round(p, 4) for p in probs]}\n")
                 else:
                     print(f"  True POI (encoded): {int(true_labels[i])}")
