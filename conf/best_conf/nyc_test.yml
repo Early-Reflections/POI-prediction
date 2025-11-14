@@ -63,6 +63,4 @@ run_args:
   epoch: 20
   valid_steps: 500
   num_workers: 4
-  # init_checkpoint: D:/Projects/STCGCN/tensorboard/20241112_212921/nyc/
-  # D:\Projects\STCGCN\log\20241119_000948
-  init_checkpoint: D:/Projects/STCGCN/tensorboard/20241119_000948/nyc/
+  init_checkpoint: D:/Projects/EarlyRef/POI-prediction/tensorboard/20251015_142454/nyc/

@@ -115,3 +115,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+visulization/poi_demo_states/*
+visulization/poi_demo_plots/*
+visulization/poi_demo_maps/*

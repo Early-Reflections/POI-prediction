@@ -37,12 +37,34 @@ Go to https://drive.google.com/drive/folders/1s5ps5Zk2932R3WRpNdNdekGHg0lOfB32 d
 - torch-geometric==2.5.3
 - transformers==4.41.2
 
-## Run
+## 🚀 Run
+
+### **1. Train the model**
 
 ```bash
 python run.py -f best_conf/{dataset_name}.yml
 # dataset_name ∈ {nyc, tky, ca}
 ```
+
+### **2. Test the model**
+
+1. change the test.yml file, load the checkpoint like:
+D:/Projects/EarlyRef/POI-prediction/tensorboard/20251015_142454/nyc/
+
+2. run in terminal
+```bash
+python run_test.py -f best_conf/{dataset_name}_test.yml
+# dataset_name ∈ {nyc, tky, ca}
+```
+this will generate a test_prediction_top20.csv file.
+
+## Visulization
+use the test_prediction_top20.csv file and the sample file
+
+run select_traj.py
+
+this will generate several html to show the prediction steps.
+
 
 ## Citation
 

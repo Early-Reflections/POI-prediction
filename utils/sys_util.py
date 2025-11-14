@@ -52,18 +52,18 @@ def seed_torch(seed=42):
 
 def visualize_channel_weight(batch_attention_weights_list, writer, epoch, figure_names):
     """
-    传入一个包含多个 batch_attention_weights 的列表，以及对应的图名列表，将每个 attention weight 可视化。
+    input a list containing multiple batch_attention_weights, and the corresponding figure names, visualize each attention weight.
     """
     num_plots = len(batch_attention_weights_list)
     fig, axes = plt.subplots(1, num_plots, figsize=(8 * num_plots, 6))
 
     for idx, (batch_attention_weights, figure_name) in enumerate(zip(batch_attention_weights_list, figure_names)):
-        # 计算平均通道注意力
+        # calculate the average channel attention
         test_attention_scores = torch.cat(batch_attention_weights, dim=0)  # [total_samples, num_channels, num_channels]
         mean_attention_scores = test_attention_scores.mean(dim=0).numpy()  # [num_channels, num_channels]
 
-        # 绘制热力图
-        ax = axes[idx] if num_plots > 1 else axes  # 处理单一图像的情况
+        # draw the heatmap
+        ax = axes[idx] if num_plots > 1 else axes  # handle the single image case
         sns.heatmap(mean_attention_scores, annot=True, cmap='viridis', cbar=True, square=True, ax=ax)
         ax.set_title(figure_name)
 
