@@ -68,6 +68,9 @@ if __name__ == '__main__':
     if not osp.isdir(cfg.run_args.log_path):
         os.makedirs(cfg.run_args.log_path)
 
+    # Show user where logs and outputs will be stored
+    print(f"[run_test] Logs and outputs will be saved under: {cfg.run_args.log_path}")
+
     set_logger(cfg.run_args)
 
     hparam_dict = {}
@@ -209,6 +212,7 @@ if __name__ == '__main__':
             raise FileNotFoundError("No checkpoint found. Set run_args.init_checkpoint in YAML or train a model first.")
         checkpoint = torch.load(osp.join(ckpt_dir, 'checkpoint.pt'))
         logging.info(f'[Evaluating] Load checkpoint from {ckpt_dir}')
+        print(f"[run_test] Loaded checkpoint from: {ckpt_dir}")
         model.load_state_dict(checkpoint['model_state_dict'])
         model.eval()
         loss_list = []
@@ -264,6 +268,7 @@ if __name__ == '__main__':
                 combined_path = osp.join(cfg.run_args.log_path, f'test_predictions_top{top_k}.csv')
                 test_df.to_csv(combined_path, index=False)
                 logging.info(f'[Evaluating] Saved top-{top_k} predictions with original data to {combined_path}')
+                print(f"[run_test] Saved top-{top_k} predictions with original data to: {combined_path}")
         else:
             logging.warning(
                 f'[Evaluating] test_sample.csv not found at {test_sample_path}, unable to store predictions with original data.'

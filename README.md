@@ -11,12 +11,33 @@ The model introduces graph attention and channel attention mechanisms to adaptiv
 - Enhances representation of spatio-temporal dependencies among users, POIs, and trajectories.
 - Fully compatible with the same dataset format and training scripts as the original STHGCN.
 
-## Setup options
+## Setup
 
 ```bash
 git clone https://github.com/yourusername/POI-prediction.git
 
 cd POI-prediction
+```
+
+### Data
+
+Go to https://drive.google.com/drive/folders/1s5ps5Zk2932R3WRpNdNdekGHg0lOfB32 download the 'data' file into the root directory like:
+
+Google drive gave me:
+```
+data-20251111T033806Z-1-002.zip  
+data-20251111T033806Z-1-004.zip
+traj2traj_pyg_data-001.pt
+traj2traj_pyg_data-003.pt
+```
+The two traj2traj files are not the same byte count, so I don't know which is which.
+Manually redownload the traj2traj files and placed them in the folders tky and tky\preprocessed.
+
+```
+/data
+/dataset
+/layer
+...
 ```
 
 ### Option A) Local Python (venv; Python 3.10)
@@ -53,25 +74,6 @@ docker compose run --service-ports --rm tensorboard \
 Notes:
 - Compose binds the repo at /app, so local data/ is available in the container.
 - GPU usage: compose is set to NVIDIA GPU id 0 for the app service; adjust `device_ids` if needed.
-
-Go to https://drive.google.com/drive/folders/1s5ps5Zk2932R3WRpNdNdekGHg0lOfB32 download the 'data' file into the root directory like:
-
-Google drive gave me:
-```
-data-20251111T033806Z-1-002.zip  
-data-20251111T033806Z-1-004.zip
-traj2traj_pyg_data-001.pt
-traj2traj_pyg_data-003.pt
-```
-The two traj2traj files are not the same byte count, so I don't know which is which.
-Manually redownload the traj2traj files and placed them in the folders tky and tky\preprocessed.
-
-```
-/data
-/dataset
-/layer
-...
-```
 
 
 ## Main dependencies:
