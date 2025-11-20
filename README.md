@@ -94,19 +94,31 @@ Copy paste example:
 python run.py -f best_conf/nyc.yml
 ```
 
-## Test
-
-Evaluate using latest checkpoint if run_args.init_checkpoint is unset; set run_args.visualize: True to log images.
-
-```bash
-python run_test.py -f best_conf/nyc.yml
-```
-
 Open TensorBoard; run_test.py writes to log/, run.py writes to tensorboard/.
 
 ```bash
 tensorboard --logdir log
 ```
+
+### **2. Test the model**
+
+1. change the test.yml file, load the checkpoint like:
+D:/Projects/EarlyRef/POI-prediction/tensorboard/20251015_142454/nyc/
+
+2. run in terminal
+```bash
+python run_test.py -f best_conf/{dataset_name}_test.yml
+# dataset_name ∈ {nyc, tky, ca}
+```
+this will generate a test_prediction_top20.csv file.
+
+## Visulization
+use the test_prediction_top20.csv file and the sample file
+
+run select_traj.py
+
+this will generate several html to show the prediction steps.
+
 
 ## Citation
 

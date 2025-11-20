@@ -4,11 +4,12 @@ import os.path as osp
 import datetime
 import torch
 import pandas as pd
+import numpy as np
 import random
 import argparse
 from torch.utils.tensorboard import SummaryWriter
 from preprocess import preprocess
-from utils import seed_torch, set_logger, Cfg, count_parameters, test_step, visualize_channel_weight, visualize_step
+from utils import seed_torch, set_logger, Cfg, count_parameters, test_step, visualize_channel_weight, visualize_step, get_root_dir
 from layer import NeighborSampler
 from dataset import LBSNDataset
 from model import STHGCN, SequentialTransformer
@@ -75,9 +76,7 @@ if __name__ == '__main__':
     hparam_dict['seed'] = seed
     hparam_dict['sizes'] = '-'.join([str(item) for item in cfg.model_args.sizes])
 
-    # Preprocess data
     preprocess(cfg)
-    # preprocess_address(cfg)
 
     # Initialize dataset
     lbsn_dataset = LBSNDataset(cfg)
@@ -211,41 +210,64 @@ if __name__ == '__main__':
         checkpoint = torch.load(osp.join(ckpt_dir, 'checkpoint.pt'))
         logging.info(f'[Evaluating] Load checkpoint from {ckpt_dir}')
         model.load_state_dict(checkpoint['model_state_dict'])
-        # recall_res, ndcg_res, map_res, mrr_res, loss, valid_indices, class_correct, class_total, class_accuracy= test_step(model, sampler_test)
+        model.eval()
+        loss_list = []
+        pred_list = []
+        label_list = []
+        # top_k = min(20, cfg.dataset_args.num_poi)
+        top_k = 20
 
-        # num_params = count_parameters(model)
-        # metric_dict = {
-        #     'hparam/num_params': num_params,
-        #     'hparam/Recall@1': recall_res[1],
-        #     'hparam/Recall@5': recall_res[5],
-        #     'hparam/Recall@10': recall_res[10],
-        #     'hparam/Recall@20': recall_res[20],
-        #     'hparam/NDCG@1': ndcg_res[1],
-        #     'hparam/NDCG@5': ndcg_res[5],
-        #     'hparam/NDCG@10': ndcg_res[10],
-        #     'hparam/NDCG@20': ndcg_res[20],
-        #     'hparam/MAP@1': map_res[1],
-        #     'hparam/MAP@5': map_res[5],
-        #     'hparam/MAP@10': map_res[10],
-        #     'hparam/MAP@20': map_res[20],
-        #     'hparam/MRR': mrr_res,
-        # }
-        # logging.info(f'[Evaluating] Test evaluation result : {metric_dict}')
-        
-        # # write valid_indices, class_correct, class_total, class_accuracy into csv file
-        # df = pd.DataFrame({'valid_indices': valid_indices, 'class_correct': class_correct, 'class_total': class_total, 'class_accuracy': class_accuracy})
-        # # write the label_count and original_label_count into csv file
+        with torch.no_grad():
+            for row in tqdm(sampler_test):
+                split_index = torch.max(row.adjs_t[1].storage.row()).tolist()
+                row = row.to(model.device)
 
-    # df.to_csv(osp.join(cfg.run_args.log_path, 'class_accuracy.csv'), index=False)
+                input_data = {
+                    'x': row.x,
+                    'edge_index': row.adjs_t,
+                    'edge_attr': row.edge_attrs,
+                    'split_index': split_index,
+                    'delta_ts': row.edge_delta_ts,
+                    'delta_ss': row.edge_delta_ss,
+                    'edge_type': row.edge_types
+                }
 
-    # %% visualize the channel weight (only if requested)
-    if getattr(cfg.run_args, 'visualize', False):
-        attention_weights_0, attention_weights_1, attention_weights_2 = visualize_step(model, sampler_test)
-        writer = SummaryWriter(log_dir=cfg.run_args.log_path)
-        visualize_channel_weight(
-            [attention_weights_0, attention_weights_1, attention_weights_2],
-            writer,
-            epoch=0,
-            figure_names=['time_filter', 'traj2traj_l0', 'traj2traj_l1']
+                out, loss = model(input_data, label=row.y[:, 0], mode='test')
+                loss_list.append(loss.cpu().detach().numpy().tolist())
+                topk_indices = torch.topk(out, k=top_k, dim=1, largest=True, sorted=True)[1]
+                pred_list.append(topk_indices.cpu().detach())
+                label_list.append(row.y[:, :1].cpu())
+        pred_ = torch.cat(pred_list, dim=0)
+        label_ = torch.cat(label_list, dim=0)
+        recalls, NDCGs, MAPs = {}, {}, {}
+        logging.info(f"[Evaluating] Average loss: {np.mean(loss_list)}")
+
+        test_sample_path = osp.join(
+            get_root_dir(),
+            'data',
+            cfg.dataset_args.dataset_name,
+            'preprocessed',
+            'test_sample.csv'
         )
-        writer.close()
+
+        # save the pred_ and label_ into csv file
+        if osp.exists(test_sample_path):
+            test_df = pd.read_csv(test_sample_path).reset_index(drop=True)
+            if len(test_df) != pred_.size(0):
+                logging.warning(
+                    '[Evaluating] Length mismatch between test samples and predictions '
+                    f'({len(test_df)} vs {pred_.size(0)}). Skipping combined export.'
+                )
+            else:
+                for idx in range(top_k):
+                    test_df[f'pred_top_{idx + 1}'] = pred_[:, idx].tolist()
+                combined_path = osp.join(cfg.run_args.log_path, f'test_predictions_top{top_k}.csv')
+                test_df.to_csv(combined_path, index=False)
+                logging.info(f'[Evaluating] Saved top-{top_k} predictions with original data to {combined_path}')
+        else:
+            logging.warning(
+                f'[Evaluating] test_sample.csv not found at {test_sample_path}, unable to store predictions with original data.'
+            )
+        # # %% visulize the channel weight
+        # attention_weights_0, attention_weights_1, attention_weights_2= visualize_step(model, sampler_test)
+        # visualize_channel_weight([attention_weights_0, attention_weights_1, attention_weights_2], 'attention_weights')
