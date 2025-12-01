@@ -1,0 +1,163 @@
+{
+  "dataset": "nyc",
+  "scenarios": [
+    {
+      "id": "demo-nyc-1",
+      "name": "SoHo to Little Italy (correct top-1 prediction)",
+      "points": [
+        { "lat": 40.7203, "lon": -74.0045 },
+        { "lat": 40.7209, "lon": -74.0030 },
+        { "lat": 40.7216, "lon": -74.0017 },
+        { "lat": 40.7223, "lon": -74.0005 },
+        { "lat": 40.7231, "lon": -73.9992 },
+        { "lat": 40.7238, "lon": -73.9980 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7238, "lon": -73.9980, "score": 0.96 },
+        { "lat": 40.7244, "lon": -73.9972, "score": 0.86 },
+        { "lat": 40.7229, "lon": -73.9988, "score": 0.78 }
+      ]
+    },
+    {
+      "id": "demo-nyc-2",
+      "name": "Chinatown evening walk (top-5 hit)",
+      "points": [
+        { "lat": 40.7155, "lon": -73.9998 },
+        { "lat": 40.7150, "lon": -73.9986 },
+        { "lat": 40.7143, "lon": -73.9975 },
+        { "lat": 40.7136, "lon": -73.9964 },
+        { "lat": 40.7130, "lon": -73.9954 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7134, "lon": -73.9948, "score": 0.91 },
+        { "lat": 40.7130, "lon": -73.9954, "score": 0.85 },
+        { "lat": 40.7140, "lon": -73.9960, "score": 0.80 },
+        { "lat": 40.7126, "lon": -73.9950, "score": 0.72 }
+      ]
+    },
+    {
+      "id": "demo-nyc-3",
+      "name": "Tribeca lunch route (miss)",
+      "points": [
+        { "lat": 40.7176, "lon": -74.0100 },
+        { "lat": 40.7183, "lon": -74.0089 },
+        { "lat": 40.7190, "lon": -74.0078 },
+        { "lat": 40.7197, "lon": -74.0067 },
+        { "lat": 40.7204, "lon": -74.0056 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7208, "lon": -74.0049, "score": 0.88 },
+        { "lat": 40.7202, "lon": -74.0062, "score": 0.81 },
+        { "lat": 40.7194, "lon": -74.0054, "score": 0.72 }
+      ]
+    },
+    {
+      "id": "demo-nyc-4",
+      "name": "Houston Street coffee hop (correct top-1)",
+      "points": [
+        { "lat": 40.7240, "lon": -74.0028 },
+        { "lat": 40.7245, "lon": -74.0018 },
+        { "lat": 40.7249, "lon": -74.0008 },
+        { "lat": 40.7253, "lon": -73.9998 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7253, "lon": -73.9998, "score": 0.94 },
+        { "lat": 40.7259, "lon": -73.9989, "score": 0.86 },
+        { "lat": 40.7247, "lon": -74.0003, "score": 0.79 }
+      ]
+    },
+    {
+      "id": "demo-nyc-5",
+      "name": "SoHo side streets (top-5 hit)",
+      "points": [
+        { "lat": 40.7198, "lon": -74.0048 },
+        { "lat": 40.7199, "lon": -74.0036 },
+        { "lat": 40.7202, "lon": -74.0024 },
+        { "lat": 40.7205, "lon": -74.0013 },
+        { "lat": 40.7207, "lon": -74.0002 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7210, "lon": -74.0000, "score": 0.93 },
+        { "lat": 40.7207, "lon": -74.0002, "score": 0.86 },
+        { "lat": 40.7203, "lon": -74.0015, "score": 0.80 }
+      ]
+    },
+    {
+      "id": "demo-nyc-6",
+      "name": "Canal Street commuter (miss)",
+      "points": [
+        { "lat": 40.7180, "lon": -74.0065 },
+        { "lat": 40.7186, "lon": -74.0054 },
+        { "lat": 40.7192, "lon": -74.0043 },
+        { "lat": 40.7198, "lon": -74.0032 },
+        { "lat": 40.7204, "lon": -74.0021 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7209, "lon": -74.0010, "score": 0.90 },
+        { "lat": 40.7199, "lon": -74.0038, "score": 0.83 },
+        { "lat": 40.7188, "lon": -74.0048, "score": 0.76 }
+      ]
+    },
+    {
+      "id": "demo-nyc-7",
+      "name": "Broadway window shopping (miss)",
+      "points": [
+        { "lat": 40.7210, "lon": -73.9999 },
+        { "lat": 40.7215, "lon": -73.9988 },
+        { "lat": 40.7220, "lon": -73.9977 },
+        { "lat": 40.7225, "lon": -73.9966 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7229, "lon": -73.9960, "score": 0.89 },
+        { "lat": 40.7219, "lon": -73.9970, "score": 0.82 },
+        { "lat": 40.7222, "lon": -73.9982, "score": 0.74 }
+      ]
+    },
+    {
+      "id": "demo-nyc-8",
+      "name": "NoHo office commute (correct top-1)",
+      "points": [
+        { "lat": 40.7260, "lon": -73.9955 },
+        { "lat": 40.7255, "lon": -73.9965 },
+        { "lat": 40.7250, "lon": -73.9975 },
+        { "lat": 40.7245, "lon": -73.9985 },
+        { "lat": 40.7240, "lon": -73.9995 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7240, "lon": -73.9995, "score": 0.92 },
+        { "lat": 40.7246, "lon": -73.9988, "score": 0.84 },
+        { "lat": 40.7251, "lon": -73.9978, "score": 0.77 }
+      ]
+    },
+    {
+      "id": "demo-nyc-9",
+      "name": "Little Italy dinner (miss)",
+      "points": [
+        { "lat": 40.7195, "lon": -73.9970 },
+        { "lat": 40.7199, "lon": -73.9960 },
+        { "lat": 40.7203, "lon": -73.9950 },
+        { "lat": 40.7207, "lon": -73.9940 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7211, "lon": -73.9935, "score": 0.90 },
+        { "lat": 40.7200, "lon": -73.9955, "score": 0.82 },
+        { "lat": 40.7197, "lon": -73.9965, "score": 0.74 }
+      ]
+    },
+    {
+      "id": "demo-nyc-10",
+      "name": "East Village detour (miss)",
+      "points": [
+        { "lat": 40.7245, "lon": -73.9925 },
+        { "lat": 40.7240, "lon": -73.9935 },
+        { "lat": 40.7235, "lon": -73.9945 },
+        { "lat": 40.7230, "lon": -73.9955 }
+      ],
+      "predictedPois": [
+        { "lat": 40.7236, "lon": -73.9940, "score": 0.88 },
+        { "lat": 40.7242, "lon": -73.9930, "score": 0.81 },
+        { "lat": 40.7239, "lon": -73.9920, "score": 0.73 }
+      ]
+    }
+  ]
+}

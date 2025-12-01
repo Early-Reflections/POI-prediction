@@ -9,6 +9,7 @@ checkpoint/
 tensorboard/
 logs/
 test/
+publications/
 .idea/
 
 # Byte-compiled / optimized / DLL files

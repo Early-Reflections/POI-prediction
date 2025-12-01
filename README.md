@@ -129,3 +129,7 @@ If you use this repository, please cite:
 Han Qiuhan, Wang Qian, Yoshikawa Atsushi, and Yamamura Masayuki.
 Context-aware Spatiotemporal Graph Attention Network for Next POI Recommendation.
 Proceedings of KSEM 2025.
+
+### Appendix
+
+sudo chown -R $USER:$USER log

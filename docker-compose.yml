@@ -28,3 +28,13 @@ services:
     ports:
       - "6007:6007"
     # No GPU required for TensorBoard.
+
+  mapping-web:
+    # Why: Serve the web-based POI mapping animation UI for marketing demos.
+    build:
+      context: ./mapping/web
+      dockerfile: Dockerfile
+    image: poi-mapping-web:latest
+    working_dir: /app
+    ports:
+      - "4173:4173"
