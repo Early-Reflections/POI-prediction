@@ -4,27 +4,39 @@ import ScenarioControls from "./components/ScenarioControls.jsx";
 
 const ANIMATION_DURATION_MS = 14000;
 
+const DATA_SOURCES = [
+  { id: "nyc-real", label: "NYC - real predictions", path: "/data/demo-nyc-real.json" },
+  { id: "nyc-synth", label: "NYC - synthetic demo", path: "/data/demo-nyc.json" },
+  { id: "tky-real", label: "Tokyo - real predictions", path: "/data/demo-tky-real.json" }
+];
+
 function App() {
   const [scenarios, setScenarios] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [timeMs, setTimeMs] = useState(0);
+  const [dataSourceId, setDataSourceId] = useState("nyc-real");
+  const [zoomBias, setZoomBias] = useState(-1);
 
   useEffect(() => {
-    //fetch("/data/demo-nyc.json")
-    fetch("/data/demo-nyc-real.json")
+    const source = DATA_SOURCES.find((d) => d.id === dataSourceId) || DATA_SOURCES[0];
+    fetch(source.path)
       .then((res) => res.json())
       .then((data) => {
         const list = Array.isArray(data.scenarios) ? data.scenarios : [];
         setScenarios(list);
         if (list.length > 0) {
           setSelectedId(list[0].id);
+        } else {
+          setSelectedId(null);
         }
+        setTimeMs(0);
       })
       .catch(() => {
         setScenarios([]);
+        setSelectedId(null);
       });
-  }, []);
+  }, [dataSourceId]);
 
   useEffect(() => {
     if (!isPlaying) {
@@ -77,13 +89,24 @@ function App() {
 
   return (
     <div className="app-root">
-      <MapView scenario={activeScenario} timeMs={timeMs} durationMs={ANIMATION_DURATION_MS} />
+      <MapView
+        scenario={activeScenario}
+        timeMs={timeMs}
+        durationMs={ANIMATION_DURATION_MS}
+        zoomBias={zoomBias}
+        datasetId={dataSourceId}
+      />
       <ScenarioControls
         scenarios={scenarios}
         selectedId={selectedId}
         onSelect={handleSelectScenario}
         isPlaying={isPlaying}
         onTogglePlay={() => setIsPlaying((v) => !v)}
+        dataSources={DATA_SOURCES}
+        dataSourceId={dataSourceId}
+        onChangeDataSource={setDataSourceId}
+        zoomBias={zoomBias}
+        onChangeZoomBias={setZoomBias}
       />
     </div>
   );

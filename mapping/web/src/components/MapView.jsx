@@ -38,7 +38,7 @@ function computeAnimationState(scenario, timeMs, durationMs) {
   };
 }
 
-function computeScenarioViewport(scenario) {
+function computeScenarioViewport(scenario, zoomBias = ZOOM_BIAS) {
   if (!scenario) {
     return {
       center: [-74.006, 40.7128],
@@ -94,7 +94,7 @@ function computeScenarioViewport(scenario) {
   } else {
     zoom = 11;
   }
-  zoom = Math.max(3, zoom + ZOOM_BIAS);
+  zoom = Math.max(3, zoom + zoomBias);
   const centerLng = (minLng + maxLng) / 2;
   const centerLat = (minLat + maxLat) / 2;
   return {
@@ -268,7 +268,7 @@ function buildLayers(scenario, timeMs, durationMs) {
   return layers;
 }
 
-function MapView({ scenario, timeMs, durationMs }) {
+function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const overlayRef = useRef(null);
@@ -279,7 +279,7 @@ function MapView({ scenario, timeMs, durationMs }) {
     }
     // Compute a per-scenario viewport so each trajectory gets an appropriate
     // zoom level and center based on its spatial extent (short walks vs. long trips).
-    const viewport = computeScenarioViewport(scenario);
+    const viewport = computeScenarioViewport(scenario, zoomBias);
     const initialCenter = viewport.center;
 
     // Create the MapLibre map.
@@ -320,7 +320,7 @@ function MapView({ scenario, timeMs, durationMs }) {
     if (!mapRef.current || !scenario || !scenario.points || scenario.points.length === 0) {
       return;
     }
-    const viewport = computeScenarioViewport(scenario);
+    const viewport = computeScenarioViewport(scenario, zoomBias);
     mapRef.current.flyTo({
       center: viewport.center,
       zoom: viewport.zoom,
@@ -328,7 +328,23 @@ function MapView({ scenario, timeMs, durationMs }) {
       curve: 1.4,
       essential: true
     });
-  }, [scenario]);
+  }, [scenario, zoomBias]);
+
+  // When the dataset source changes (e.g. NYC -> Tokyo), teleport instantly
+  // to the new viewport to avoid a long animated traverse across the globe.
+  useEffect(() => {
+    if (!mapRef.current || !scenario || !scenario.points || scenario.points.length === 0) {
+      return;
+    }
+    const viewport = computeScenarioViewport(scenario, zoomBias);
+    const map = mapRef.current;
+    map.jumpTo({
+      center: viewport.center,
+      zoom: viewport.zoom,
+      bearing: map.getBearing(),
+      pitch: map.getPitch()
+    });
+  }, [datasetId]);
 
   useEffect(() => {
     if (!mapRef.current || !scenario || !scenario.points || scenario.points.length === 0) {
@@ -339,7 +355,7 @@ function MapView({ scenario, timeMs, durationMs }) {
       return;
     }
     const currentPoint = state.currentPoint;
-    const viewport = computeScenarioViewport(scenario);
+    const viewport = computeScenarioViewport(scenario, zoomBias);
     const map = mapRef.current;
     const from = map.getCenter();
     const alpha = 0.02;
@@ -351,7 +367,7 @@ function MapView({ scenario, timeMs, durationMs }) {
       bearing: map.getBearing(),
       pitch: map.getPitch()
     });
-  }, [scenario, timeMs, durationMs]);
+  }, [scenario, timeMs, durationMs, zoomBias]);
 
   useEffect(() => {
     if (!overlayRef.current) {
