@@ -13,8 +13,8 @@
   },
   "scenarios": [
     {
-      "id": "nyc-40831-top1",
-      "name": "NYC trajectory 40831 (top-1 hit)",
+      "id": "tky-40831-top1",
+      "name": "Tokyo trajectory 40831 (top-1 hit)",
       "trajectory_id": 40831,
       "user_id": 1416,
       "hit_class": "top1",
@@ -71,8 +71,8 @@
       ]
     },
     {
-      "id": "nyc-61846-top1",
-      "name": "NYC trajectory 61846 (top-1 hit)",
+      "id": "tky-61846-top1",
+      "name": "Tokyo trajectory 61846 (top-1 hit)",
       "trajectory_id": 61846,
       "user_id": 2152,
       "hit_class": "top1",
@@ -137,8 +137,8 @@
       ]
     },
     {
-      "id": "nyc-34455-top1",
-      "name": "NYC trajectory 34455 (top-1 hit)",
+      "id": "tky-34455-top1",
+      "name": "Tokyo trajectory 34455 (top-1 hit)",
       "trajectory_id": 34455,
       "user_id": 1187,
       "hit_class": "top1",
@@ -211,8 +211,8 @@
       ]
     },
     {
-      "id": "nyc-63699-top1",
-      "name": "NYC trajectory 63699 (top-1 hit)",
+      "id": "tky-63699-top1",
+      "name": "Tokyo trajectory 63699 (top-1 hit)",
       "trajectory_id": 63699,
       "user_id": 2220,
       "hit_class": "top1",
@@ -273,8 +273,8 @@
       ]
     },
     {
-      "id": "nyc-42481-top1",
-      "name": "NYC trajectory 42481 (top-1 hit)",
+      "id": "tky-42481-top1",
+      "name": "Tokyo trajectory 42481 (top-1 hit)",
       "trajectory_id": 42481,
       "user_id": 1480,
       "hit_class": "top1",
@@ -339,8 +339,8 @@
       ]
     },
     {
-      "id": "nyc-12381-top1",
-      "name": "NYC trajectory 12381 (top-1 hit)",
+      "id": "tky-12381-top1",
+      "name": "Tokyo trajectory 12381 (top-1 hit)",
       "trajectory_id": 12381,
       "user_id": 419,
       "hit_class": "top1",
@@ -413,8 +413,8 @@
       ]
     },
     {
-      "id": "nyc-9887-top1",
-      "name": "NYC trajectory 9887 (top-1 hit)",
+      "id": "tky-9887-top1",
+      "name": "Tokyo trajectory 9887 (top-1 hit)",
       "trajectory_id": 9887,
       "user_id": 339,
       "hit_class": "top1",
@@ -475,8 +475,8 @@
       ]
     },
     {
-      "id": "nyc-27269-top1",
-      "name": "NYC trajectory 27269 (top-1 hit)",
+      "id": "tky-27269-top1",
+      "name": "Tokyo trajectory 27269 (top-1 hit)",
       "trajectory_id": 27269,
       "user_id": 930,
       "hit_class": "top1",
@@ -537,8 +537,8 @@
       ]
     },
     {
-      "id": "nyc-38408-top1",
-      "name": "NYC trajectory 38408 (top-1 hit)",
+      "id": "tky-38408-top1",
+      "name": "Tokyo trajectory 38408 (top-1 hit)",
       "trajectory_id": 38408,
       "user_id": 1330,
       "hit_class": "top1",
@@ -631,8 +631,8 @@
       ]
     },
     {
-      "id": "nyc-27028-top1",
-      "name": "NYC trajectory 27028 (top-1 hit)",
+      "id": "tky-27028-top1",
+      "name": "Tokyo trajectory 27028 (top-1 hit)",
       "trajectory_id": 27028,
       "user_id": 924,
       "hit_class": "top1",
@@ -693,8 +693,8 @@
       ]
     },
     {
-      "id": "nyc-57991-top1",
-      "name": "NYC trajectory 57991 (top-1 hit)",
+      "id": "tky-57991-top1",
+      "name": "Tokyo trajectory 57991 (top-1 hit)",
       "trajectory_id": 57991,
       "user_id": 2005,
       "hit_class": "top1",
@@ -767,8 +767,8 @@
       ]
     },
     {
-      "id": "nyc-45583-top1",
-      "name": "NYC trajectory 45583 (top-1 hit)",
+      "id": "tky-45583-top1",
+      "name": "Tokyo trajectory 45583 (top-1 hit)",
       "trajectory_id": 45583,
       "user_id": 1587,
       "hit_class": "top1",
@@ -825,8 +825,8 @@
       ]
     },
     {
-      "id": "nyc-38092-top1",
-      "name": "NYC trajectory 38092 (top-1 hit)",
+      "id": "tky-38092-top1",
+      "name": "Tokyo trajectory 38092 (top-1 hit)",
       "trajectory_id": 38092,
       "user_id": 1319,
       "hit_class": "top1",
@@ -887,8 +887,8 @@
       ]
     },
     {
-      "id": "nyc-33238-top1",
-      "name": "NYC trajectory 33238 (top-1 hit)",
+      "id": "tky-33238-top1",
+      "name": "Tokyo trajectory 33238 (top-1 hit)",
       "trajectory_id": 33238,
       "user_id": 1141,
       "hit_class": "top1",
@@ -953,8 +953,8 @@
       ]
     },
     {
-      "id": "nyc-34375-top1",
-      "name": "NYC trajectory 34375 (top-1 hit)",
+      "id": "tky-34375-top1",
+      "name": "Tokyo trajectory 34375 (top-1 hit)",
       "trajectory_id": 34375,
       "user_id": 1184,
       "hit_class": "top1",
@@ -1015,8 +1015,8 @@
       ]
     },
     {
-      "id": "nyc-40501-top5",
-      "name": "NYC trajectory 40501 (top-5 hit)",
+      "id": "tky-40501-top5",
+      "name": "Tokyo trajectory 40501 (top-5 hit)",
       "trajectory_id": 40501,
       "user_id": 1406,
       "hit_class": "top5",
@@ -1101,8 +1101,8 @@
       ]
     },
     {
-      "id": "nyc-33894-top5",
-      "name": "NYC trajectory 33894 (top-5 hit)",
+      "id": "tky-33894-top5",
+      "name": "Tokyo trajectory 33894 (top-5 hit)",
       "trajectory_id": 33894,
       "user_id": 1164,
       "hit_class": "top5",
@@ -1159,8 +1159,8 @@
       ]
     },
     {
-      "id": "nyc-29045-top5",
-      "name": "NYC trajectory 29045 (top-5 hit)",
+      "id": "tky-29045-top5",
+      "name": "Tokyo trajectory 29045 (top-5 hit)",
       "trajectory_id": 29045,
       "user_id": 993,
       "hit_class": "top5",
@@ -1225,8 +1225,8 @@
       ]
     },
     {
-      "id": "nyc-56306-top5",
-      "name": "NYC trajectory 56306 (top-5 hit)",
+      "id": "tky-56306-top5",
+      "name": "Tokyo trajectory 56306 (top-5 hit)",
       "trajectory_id": 56306,
       "user_id": 1953,
       "hit_class": "top5",
@@ -1295,8 +1295,8 @@
       ]
     },
     {
-      "id": "nyc-29725-top5",
-      "name": "NYC trajectory 29725 (top-5 hit)",
+      "id": "tky-29725-top5",
+      "name": "Tokyo trajectory 29725 (top-5 hit)",
       "trajectory_id": 29725,
       "user_id": 1019,
       "hit_class": "top5",
@@ -1357,8 +1357,8 @@
       ]
     },
     {
-      "id": "nyc-41601-top5",
-      "name": "NYC trajectory 41601 (top-5 hit)",
+      "id": "tky-41601-top5",
+      "name": "Tokyo trajectory 41601 (top-5 hit)",
       "trajectory_id": 41601,
       "user_id": 1447,
       "hit_class": "top5",
@@ -1415,8 +1415,8 @@
       ]
     },
     {
-      "id": "nyc-29348-top5",
-      "name": "NYC trajectory 29348 (top-5 hit)",
+      "id": "tky-29348-top5",
+      "name": "Tokyo trajectory 29348 (top-5 hit)",
       "trajectory_id": 29348,
       "user_id": 1001,
       "hit_class": "top5",
@@ -1473,8 +1473,8 @@
       ]
     },
     {
-      "id": "nyc-36987-top5",
-      "name": "NYC trajectory 36987 (top-5 hit)",
+      "id": "tky-36987-top5",
+      "name": "Tokyo trajectory 36987 (top-5 hit)",
       "trajectory_id": 36987,
       "user_id": 1280,
       "hit_class": "top5",
@@ -1539,8 +1539,8 @@
       ]
     },
     {
-      "id": "nyc-53058-top5",
-      "name": "NYC trajectory 53058 (top-5 hit)",
+      "id": "tky-53058-top5",
+      "name": "Tokyo trajectory 53058 (top-5 hit)",
       "trajectory_id": 53058,
       "user_id": 1840,
       "hit_class": "top5",
@@ -1613,8 +1613,8 @@
       ]
     },
     {
-      "id": "nyc-57990-top5",
-      "name": "NYC trajectory 57990 (top-5 hit)",
+      "id": "tky-57990-top5",
+      "name": "Tokyo trajectory 57990 (top-5 hit)",
       "trajectory_id": 57990,
       "user_id": 2005,
       "hit_class": "top5",
@@ -1683,8 +1683,8 @@
       ]
     },
     {
-      "id": "nyc-21550-top5",
-      "name": "NYC trajectory 21550 (top-5 hit)",
+      "id": "tky-21550-top5",
+      "name": "Tokyo trajectory 21550 (top-5 hit)",
       "trajectory_id": 21550,
       "user_id": 737,
       "hit_class": "top5",
@@ -1753,8 +1753,8 @@
       ]
     },
     {
-      "id": "nyc-27664-top5",
-      "name": "NYC trajectory 27664 (top-5 hit)",
+      "id": "tky-27664-top5",
+      "name": "Tokyo trajectory 27664 (top-5 hit)",
       "trajectory_id": 27664,
       "user_id": 943,
       "hit_class": "top5",
@@ -1827,8 +1827,8 @@
       ]
     },
     {
-      "id": "nyc-49153-top5",
-      "name": "NYC trajectory 49153 (top-5 hit)",
+      "id": "tky-49153-top5",
+      "name": "Tokyo trajectory 49153 (top-5 hit)",
       "trajectory_id": 49153,
       "user_id": 1704,
       "hit_class": "top5",
@@ -1905,8 +1905,8 @@
       ]
     },
     {
-      "id": "nyc-34473-top5",
-      "name": "NYC trajectory 34473 (top-5 hit)",
+      "id": "tky-34473-top5",
+      "name": "Tokyo trajectory 34473 (top-5 hit)",
       "trajectory_id": 34473,
       "user_id": 1188,
       "hit_class": "top5",
@@ -2003,8 +2003,8 @@
       ]
     },
     {
-      "id": "nyc-40832-top5",
-      "name": "NYC trajectory 40832 (top-5 hit)",
+      "id": "tky-40832-top5",
+      "name": "Tokyo trajectory 40832 (top-5 hit)",
       "trajectory_id": 40832,
       "user_id": 1416,
       "hit_class": "top5",
@@ -2065,8 +2065,8 @@
       ]
     },
     {
-      "id": "nyc-3005-miss",
-      "name": "NYC trajectory 3005 (miss)",
+      "id": "tky-3005-miss",
+      "name": "Tokyo trajectory 3005 (miss)",
       "trajectory_id": 3005,
       "user_id": 98,
       "hit_class": "miss",
@@ -2135,8 +2135,8 @@
       ]
     },
     {
-      "id": "nyc-2356-miss",
-      "name": "NYC trajectory 2356 (miss)",
+      "id": "tky-2356-miss",
+      "name": "Tokyo trajectory 2356 (miss)",
       "trajectory_id": 2356,
       "user_id": 75,
       "hit_class": "miss",
@@ -2205,8 +2205,8 @@
       ]
     },
     {
-      "id": "nyc-26438-miss",
-      "name": "NYC trajectory 26438 (miss)",
+      "id": "tky-26438-miss",
+      "name": "Tokyo trajectory 26438 (miss)",
       "trajectory_id": 26438,
       "user_id": 904,
       "hit_class": "miss",
@@ -2279,8 +2279,8 @@
       ]
     },
     {
-      "id": "nyc-36742-miss",
-      "name": "NYC trajectory 36742 (miss)",
+      "id": "tky-36742-miss",
+      "name": "Tokyo trajectory 36742 (miss)",
       "trajectory_id": 36742,
       "user_id": 1270,
       "hit_class": "miss",
@@ -2337,8 +2337,8 @@
       ]
     },
     {
-      "id": "nyc-4088-miss",
-      "name": "NYC trajectory 4088 (miss)",
+      "id": "tky-4088-miss",
+      "name": "Tokyo trajectory 4088 (miss)",
       "trajectory_id": 4088,
       "user_id": 135,
       "hit_class": "miss",
@@ -2407,8 +2407,8 @@
       ]
     },
     {
-      "id": "nyc-2231-miss",
-      "name": "NYC trajectory 2231 (miss)",
+      "id": "tky-2231-miss",
+      "name": "Tokyo trajectory 2231 (miss)",
       "trajectory_id": 2231,
       "user_id": 70,
       "hit_class": "miss",
@@ -2481,8 +2481,8 @@
       ]
     },
     {
-      "id": "nyc-65072-miss",
-      "name": "NYC trajectory 65072 (miss)",
+      "id": "tky-65072-miss",
+      "name": "Tokyo trajectory 65072 (miss)",
       "trajectory_id": 65072,
       "user_id": 2265,
       "hit_class": "miss",
@@ -2539,8 +2539,8 @@
       ]
     },
     {
-      "id": "nyc-54281-miss",
-      "name": "NYC trajectory 54281 (miss)",
+      "id": "tky-54281-miss",
+      "name": "Tokyo trajectory 54281 (miss)",
       "trajectory_id": 54281,
       "user_id": 1880,
       "hit_class": "miss",
@@ -2597,8 +2597,8 @@
       ]
     },
     {
-      "id": "nyc-5578-miss",
-      "name": "NYC trajectory 5578 (miss)",
+      "id": "tky-5578-miss",
+      "name": "Tokyo trajectory 5578 (miss)",
       "trajectory_id": 5578,
       "user_id": 185,
       "hit_class": "miss",
@@ -2655,8 +2655,8 @@
       ]
     },
     {
-      "id": "nyc-55061-miss",
-      "name": "NYC trajectory 55061 (miss)",
+      "id": "tky-55061-miss",
+      "name": "Tokyo trajectory 55061 (miss)",
       "trajectory_id": 55061,
       "user_id": 1912,
       "hit_class": "miss",
@@ -2713,8 +2713,8 @@
       ]
     },
     {
-      "id": "nyc-31071-miss",
-      "name": "NYC trajectory 31071 (miss)",
+      "id": "tky-31071-miss",
+      "name": "Tokyo trajectory 31071 (miss)",
       "trajectory_id": 31071,
       "user_id": 1063,
       "hit_class": "miss",
@@ -2771,8 +2771,8 @@
       ]
     },
     {
-      "id": "nyc-55457-miss",
-      "name": "NYC trajectory 55457 (miss)",
+      "id": "tky-55457-miss",
+      "name": "Tokyo trajectory 55457 (miss)",
       "trajectory_id": 55457,
       "user_id": 1929,
       "hit_class": "miss",
@@ -2829,8 +2829,8 @@
       ]
     },
     {
-      "id": "nyc-47203-miss",
-      "name": "NYC trajectory 47203 (miss)",
+      "id": "tky-47203-miss",
+      "name": "Tokyo trajectory 47203 (miss)",
       "trajectory_id": 47203,
       "user_id": 1640,
       "hit_class": "miss",
@@ -2915,8 +2915,8 @@
       ]
     },
     {
-      "id": "nyc-56816-miss",
-      "name": "NYC trajectory 56816 (miss)",
+      "id": "tky-56816-miss",
+      "name": "Tokyo trajectory 56816 (miss)",
       "trajectory_id": 56816,
       "user_id": 1968,
       "hit_class": "miss",
@@ -2997,8 +2997,8 @@
       ]
     },
     {
-      "id": "nyc-430-miss",
-      "name": "NYC trajectory 430 (miss)",
+      "id": "tky-430-miss",
+      "name": "Tokyo trajectory 430 (miss)",
       "trajectory_id": 430,
       "user_id": 14,
       "hit_class": "miss",

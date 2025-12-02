@@ -85,7 +85,12 @@ def _filter_region(pred_df: pd.DataFrame) -> pd.DataFrame:
     return pred_df[m].copy()
 
 
-def build_scenarios(pred_df: pd.DataFrame, sample_df: pd.DataFrame, poi_coord: Dict[int, tuple[float, float]]):
+def build_scenarios(
+    pred_df: pd.DataFrame,
+    sample_df: pd.DataFrame,
+    poi_coord: Dict[int, tuple[float, float]],
+    dataset: str = DATASET_NAME,
+):
     # Classify hits on the full prediction set for global metrics.
     pred_all = _classify(pred_df)
 
@@ -111,6 +116,9 @@ def build_scenarios(pred_df: pd.DataFrame, sample_df: pd.DataFrame, poi_coord: D
 
     # Pre-index sample by trajectory_id for speed
     grouped_sample = sample_df.groupby("trajectory_id")
+
+    dataset_label_map = {"nyc": "NYC", "tky": "Tokyo", "ca": "CA"}
+    dataset_label = dataset_label_map.get(dataset, dataset.upper())
 
     for cls in ("top1", "top5", "miss"):
         df_cls = groups[cls]
@@ -162,7 +170,7 @@ def build_scenarios(pred_df: pd.DataFrame, sample_df: pd.DataFrame, poi_coord: D
                 continue
 
             gt_poi_id = int(row["PoiId"])
-            scenario_id = f"nyc-{traj_id}-{cls}"
+            scenario_id = f"{dataset}-{traj_id}-{cls}"
             name_suffix = {
                 "top1": "top-1 hit",
                 "top5": "top-5 hit",
@@ -170,7 +178,7 @@ def build_scenarios(pred_df: pd.DataFrame, sample_df: pd.DataFrame, poi_coord: D
             }[cls]
             scenario = {
                 "id": scenario_id,
-                "name": f"NYC trajectory {traj_id} ({name_suffix})",
+                "name": f"{dataset_label} trajectory {traj_id} ({name_suffix})",
                 "trajectory_id": traj_id,
                 "user_id": int(row["UserId"]),
                 "hit_class": cls,
@@ -187,7 +195,7 @@ def build_scenarios(pred_df: pd.DataFrame, sample_df: pd.DataFrame, poi_coord: D
 def main(dataset: str, predictions_path: str | None = None) -> None:
     root = str(Path(__file__).resolve().parents[1])
     pred_df, sample_df, poi_coord = _load_data(root, dataset, predictions_path)
-    scenarios, stats_overall, counts_by_class = build_scenarios(pred_df, sample_df, poi_coord)
+    scenarios, stats_overall, counts_by_class = build_scenarios(pred_df, sample_df, poi_coord, dataset)
 
     out_path = osp.join(root, "mapping", "web", "public", "data", f"demo-{dataset}-real.json")
     payload = {
