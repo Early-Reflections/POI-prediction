@@ -32,6 +32,7 @@ traj2traj_pyg_data-003.pt
 ```
 The two traj2traj files are not the same byte count, so I don't know which is which.
 Manually redownload the traj2traj files and placed them in the folders tky and tky\preprocessed.
+The traj2traj file under tky/processed is the valid one.
 
 ```
 /data

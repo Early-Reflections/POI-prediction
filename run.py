@@ -238,7 +238,8 @@ if __name__ == '__main__':
                 }
 
                 out, loss = model(input_data, label=data.y[:, 0])
-                training_logs.append(loss)
+                # store scalar loss values to avoid retaining computation graphs and GPU memory
+                training_logs.append(loss.item())
                 optimizer.zero_grad()
                 # loss.backward()
                 accelerator.backward(loss)
@@ -307,7 +308,7 @@ if __name__ == '__main__':
                 attention_weights_1.append(model.conv_list[0].feature_attention.attention_weights.cpu().detach())
                 attention_weights_2.append(model.conv_list[1].feature_attention.attention_weights.cpu().detach())
                 visualize_channel_weight([attention_weights_0, attention_weights_1, attention_weights_2], summary_writer, eph, f"epoch_{eph}_{global_step}_attention_weights")
-            epoch_loss = sum([loss for loss in training_logs]) / len(training_logs)
+            epoch_loss = sum(training_logs) / len(training_logs)
             epoch_time = time.time() - epoch_start_time
             logging.info(f'[Training] Epoch {eph} finished in {epoch_time:.2f}s, Average train loss at step {global_step} is {epoch_loss}:')
             summary_writer.add_scalar('train/loss_epoch', epoch_loss, eph)
