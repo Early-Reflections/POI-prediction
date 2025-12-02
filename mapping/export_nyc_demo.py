@@ -30,14 +30,14 @@ def _find_latest_predictions(root_dir: str, dataset: str) -> str:
     return candidates[0]
 
 
-def _load_data(root_dir: str, predictions_path: str | None = None):
+def _load_data(root_dir: str, dataset: str, predictions_path: str | None = None):
     if predictions_path is None:
-        predictions_path = _find_latest_predictions(root_dir, DATASET_NAME)
+        predictions_path = _find_latest_predictions(root_dir, dataset)
     print(f"[export_nyc_demo] Using predictions file: {predictions_path}")
 
     pred_df = pd.read_csv(predictions_path)
 
-    sample_path = osp.join(root_dir, "data", DATASET_NAME, "preprocessed", "sample.csv")
+    sample_path = osp.join(root_dir, "data", dataset, "preprocessed", "sample.csv")
     sample_df = pd.read_csv(
         sample_path,
         usecols=[
@@ -48,7 +48,7 @@ def _load_data(root_dir: str, predictions_path: str | None = None):
         ],
     )
 
-    poi_db_path = osp.join(root_dir, "data", DATASET_NAME, "preprocessed", "POI_database.csv")
+    poi_db_path = osp.join(root_dir, "data", dataset, "preprocessed", "POI_database.csv")
     poi_df = pd.read_csv(poi_db_path)
     poi_coord: Dict[int, tuple[float, float]] = {}
     for r in poi_df.itertuples(index=False):
@@ -184,14 +184,14 @@ def build_scenarios(pred_df: pd.DataFrame, sample_df: pd.DataFrame, poi_coord: D
     return scenarios, stats_overall, counts_by_class
 
 
-def main(predictions_path: str | None = None) -> None:
+def main(dataset: str, predictions_path: str | None = None) -> None:
     root = str(Path(__file__).resolve().parents[1])
-    pred_df, sample_df, poi_coord = _load_data(root, predictions_path)
+    pred_df, sample_df, poi_coord = _load_data(root, dataset, predictions_path)
     scenarios, stats_overall, counts_by_class = build_scenarios(pred_df, sample_df, poi_coord)
 
-    out_path = osp.join(root, "mapping", "web", "public", "data", "demo-nyc-real.json")
+    out_path = osp.join(root, "mapping", "web", "public", "data", f"demo-{dataset}-real.json")
     payload = {
-        "dataset": DATASET_NAME,
+        "dataset": dataset,
         "source": "test_predictions_top20.csv",
         "stats_overall": stats_overall,
         "scenario_counts": counts_by_class,
@@ -216,5 +216,10 @@ if __name__ == "__main__":  # pragma: no cover
         default=None,
         help="Optional explicit path to test_predictions_top20.csv; defaults to newest under log/*/nyc.",
     )
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default="nyc",
+    )
     args = parser.parse_args()
-    main(args.predictions)
+    main(args.dataset, args.predictions)

@@ -51,8 +51,8 @@ conv_args:
 run_args:
   seed: 
   gpu: 0
-  batch_size: 64
-  eval_batch_size: 64
+  batch_size: 16
+  eval_batch_size: 16
   learning_rate: 0.0001
   do_train: True
   do_validate: True

@@ -8,20 +8,28 @@ This file only covers the **mapping demo**. For training the POI model and runni
 Prerequisite: you already have a predictions file like:
 
 ```text
-log/<timestamp>/nyc/test_predictions_top20.csv
+log/<timestamp>/<dataset>/test_predictions_top20.csv
 ```
+
+where `dataset` is one of `nyc`, `tky`, or `ca` (matching what you used in
+`best_conf/{dataset}.yml`).
 
 To rebuild the real-data demo JSON from the latest predictions, run from the
 repo root:
 
 ```bash
+# NYC (default)
 docker compose run --rm app python mapping/export_nyc_demo.py
+
+# Tokyo
+docker compose run --rm app python mapping/export_nyc_demo.py --dataset tky
 ```
 
-This writes:
+This writes, for example:
 
 ```text
 mapping/web/public/data/demo-nyc-real.json
+mapping/web/public/data/demo-tky-real.json
 ```
 
 If you just want to use the built-in synthetic demo, you can skip this step and
@@ -56,5 +64,5 @@ Then open:
 http://localhost:4173
 ```
 
-You should see the animated NYC trajectories cycling through scenarios with
+You should see the animated trajectories cycling through scenarios with
 predicted POIs.

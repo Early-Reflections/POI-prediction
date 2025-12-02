@@ -59,9 +59,11 @@ docker compose build
 
 # Train
 docker compose run --rm app python run.py -f best_conf/{dataset}.yml
+docker compose run --rm app python run.py -f best_conf/tky.yml
 
 # Test
 docker compose run --rm app python run_test.py -f best_conf/{dataset}.yml
+docker compose run --rm app python run_test.py -f best_conf/tky.yml
 
 # TensorBoard (training runs are under tensorboard/)
 docker compose up -d tensorboard
