@@ -275,6 +275,9 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId, datasetVer
   const lastLoggedSecondRef = useRef(null);
   const velocityRef = useRef({ lng: 0, lat: 0 });
   const lastTimeMsRef = useRef(null);
+  const zoomRef = useRef(DEFAULT_ZOOM);
+  const targetZoomRef = useRef(DEFAULT_ZOOM);
+  const zoomVelRef = useRef(0);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
@@ -290,6 +293,10 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId, datasetVer
       zoom: viewport.zoom,
       zoomBias
     });
+    // Initialize zoom state from the first scenario we render.
+    zoomRef.current = viewport.zoom;
+    targetZoomRef.current = viewport.zoom;
+    zoomVelRef.current = 0;
     const initialCenter = viewport.center;
 
     // Create the MapLibre map.
@@ -331,21 +338,20 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId, datasetVer
       return;
     }
     const viewport = computeScenarioViewport(scenario, zoomBias);
-    const map = mapRef.current;
-    console.log("[MapView] jumpTo on scenario/zoomBias change", {
+    console.log("[MapView] scenario/zoomBias change, resetting spring state", {
       datasetId,
       scenarioId: scenario && scenario.id,
       center: viewport.center,
       zoom: viewport.zoom,
       zoomBias
     });
-    map.jumpTo({
-      center: viewport.center,
-      zoom: viewport.zoom,
-      bearing: map.getBearing(),
-      pitch: map.getPitch()
-    });
+    // Do not teleport here; let the spring-damper move the camera smoothly
+    // from its current position toward the new scenario over time.
+    // We only update the *target* zoom; the current zoom eases toward it
+    // in the animation effect.
+    targetZoomRef.current = viewport.zoom;
     velocityRef.current = { lng: 0, lat: 0 };
+    zoomVelRef.current = 0;
     lastTimeMsRef.current = null;
   }, [scenario, zoomBias]);
 
@@ -366,9 +372,13 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId, datasetVer
       zoomBias,
       currentCenter: map.getCenter()
     });
+    // On dataset change, we allow an instant jump in both position and zoom.
+    zoomRef.current = viewport.zoom;
+    targetZoomRef.current = viewport.zoom;
+    zoomVelRef.current = 0;
     map.jumpTo({
       center: viewport.center,
-      zoom: viewport.zoom,
+      zoom: zoomRef.current,
       bearing: map.getBearing(),
       pitch: map.getPitch()
     });
@@ -438,9 +448,24 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId, datasetVer
 
     velocityRef.current = { lng: nextVelLng, lat: nextVelLat };
 
+    // Smooth zoom with a spring–damper model, similar to position.
+    const targetZoom = targetZoomRef.current;
+    let currentZoom = zoomRef.current;
+    let zoomVel = zoomVelRef.current;
+    const kZoom = 6.0; // zoom spring stiffness
+    const cZoom = 6.0; // zoom damping
+
+    const toTargetZoom = targetZoom - currentZoom;
+    const accZoom = kZoom * toTargetZoom - cZoom * zoomVel;
+    const nextZoomVel = zoomVel + accZoom * dt;
+    const nextZoom = currentZoom + nextZoomVel * dt;
+
+    zoomRef.current = nextZoom;
+    zoomVelRef.current = nextZoomVel;
+
     map.jumpTo({
       center: [nextLng, nextLat],
-      zoom: viewport.zoom,
+      zoom: zoomRef.current,
       bearing: map.getBearing(),
       pitch: map.getPitch()
     });

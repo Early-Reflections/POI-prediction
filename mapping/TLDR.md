@@ -66,3 +66,13 @@ http://localhost:4173
 
 You should see the animated trajectories cycling through scenarios with
 predicted POIs.
+
+## Video 
+
+```bash
+ffmpeg -i input.mp4 \
+  -vf "scale=-2:1080" \
+  -c:v libx264 -preset slow -crf 18 \
+  -c:a aac -b:a 160k \
+  output_1080p.mp4
+```
