@@ -268,10 +268,13 @@ function buildLayers(scenario, timeMs, durationMs) {
   return layers;
 }
 
-function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId }) {
+function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId, datasetVersion }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const overlayRef = useRef(null);
+  const lastLoggedSecondRef = useRef(null);
+  const velocityRef = useRef({ lng: 0, lat: 0 });
+  const lastTimeMsRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) {
@@ -280,6 +283,13 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId }) {
     // Compute a per-scenario viewport so each trajectory gets an appropriate
     // zoom level and center based on its spatial extent (short walks vs. long trips).
     const viewport = computeScenarioViewport(scenario, zoomBias);
+    console.log("[MapView] Initializing map", {
+      datasetId,
+      scenarioId: scenario && scenario.id,
+      center: viewport.center,
+      zoom: viewport.zoom,
+      zoomBias
+    });
     const initialCenter = viewport.center;
 
     // Create the MapLibre map.
@@ -321,16 +331,25 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId }) {
       return;
     }
     const viewport = computeScenarioViewport(scenario, zoomBias);
-    mapRef.current.flyTo({
+    const map = mapRef.current;
+    console.log("[MapView] jumpTo on scenario/zoomBias change", {
+      datasetId,
+      scenarioId: scenario && scenario.id,
       center: viewport.center,
       zoom: viewport.zoom,
-      speed: 0.8,
-      curve: 1.4,
-      essential: true
+      zoomBias
     });
+    map.jumpTo({
+      center: viewport.center,
+      zoom: viewport.zoom,
+      bearing: map.getBearing(),
+      pitch: map.getPitch()
+    });
+    velocityRef.current = { lng: 0, lat: 0 };
+    lastTimeMsRef.current = null;
   }, [scenario, zoomBias]);
 
-  // When the dataset source changes (e.g. NYC -> Tokyo), teleport instantly
+  // When a new dataset has finished loading, teleport instantly
   // to the new viewport to avoid a long animated traverse across the globe.
   useEffect(() => {
     if (!mapRef.current || !scenario || !scenario.points || scenario.points.length === 0) {
@@ -338,13 +357,24 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId }) {
     }
     const viewport = computeScenarioViewport(scenario, zoomBias);
     const map = mapRef.current;
+    console.log("[MapView] jumpTo on dataset load", {
+      datasetId,
+      datasetVersion,
+      scenarioId: scenario && scenario.id,
+      center: viewport.center,
+      zoom: viewport.zoom,
+      zoomBias,
+      currentCenter: map.getCenter()
+    });
     map.jumpTo({
       center: viewport.center,
       zoom: viewport.zoom,
       bearing: map.getBearing(),
       pitch: map.getPitch()
     });
-  }, [datasetId]);
+    velocityRef.current = { lng: 0, lat: 0 };
+    lastTimeMsRef.current = null;
+  }, [datasetVersion]);
 
   useEffect(() => {
     if (!mapRef.current || !scenario || !scenario.points || scenario.points.length === 0) {
@@ -355,12 +385,59 @@ function MapView({ scenario, timeMs, durationMs, zoomBias, datasetId }) {
       return;
     }
     const currentPoint = state.currentPoint;
+    const currentSecond = Math.floor(timeMs / 1000);
+    if (lastLoggedSecondRef.current !== currentSecond) {
+      lastLoggedSecondRef.current = currentSecond;
+      console.log("[MapView] animation tick", {
+        datasetId,
+        scenarioId: scenario && scenario.id,
+        timeMs,
+        phase: state.phase,
+        currentPoint: currentPoint
+          ? { lon: currentPoint.lon, lat: currentPoint.lat }
+          : null
+      });
+    }
     const viewport = computeScenarioViewport(scenario, zoomBias);
     const map = mapRef.current;
+
+    const prevTimeMs = lastTimeMsRef.current;
+    let dtMs;
+    if (prevTimeMs == null) {
+      dtMs = 16; // ~60 FPS default for first step
+    } else {
+      dtMs = timeMs - prevTimeMs;
+    }
+    lastTimeMsRef.current = timeMs;
+
+    let dt = dtMs / 1000;
+    if (!Number.isFinite(dt) || dt <= 0) {
+      dt = 0.016;
+    }
+    dt = Math.min(Math.max(dt, 0.001), 0.05); // clamp between 1ms and 50ms
+
+    const targetLng = currentPoint.lon;
+    const targetLat = currentPoint.lat;
     const from = map.getCenter();
-    const alpha = 0.02;
-    const nextLng = from.lng + (currentPoint.lon - from.lng) * alpha;
-    const nextLat = from.lat + (currentPoint.lat - from.lat) * alpha;
+
+    const k = 3.0; // spring stiffness
+    const c = 5.0; // damping
+
+    const vel = velocityRef.current;
+    const toTargetLng = targetLng - from.lng;
+    const toTargetLat = targetLat - from.lat;
+
+    const accLng = k * toTargetLng - c * vel.lng;
+    const accLat = k * toTargetLat - c * vel.lat;
+
+    const nextVelLng = vel.lng + accLng * dt;
+    const nextVelLat = vel.lat + accLat * dt;
+
+    const nextLng = from.lng + nextVelLng * dt;
+    const nextLat = from.lat + nextVelLat * dt;
+
+    velocityRef.current = { lng: nextVelLng, lat: nextVelLat };
+
     map.jumpTo({
       center: [nextLng, nextLat],
       zoom: viewport.zoom,

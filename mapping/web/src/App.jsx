@@ -17,13 +17,28 @@ function App() {
   const [timeMs, setTimeMs] = useState(0);
   const [dataSourceId, setDataSourceId] = useState("nyc-real");
   const [zoomBias, setZoomBias] = useState(-1);
+  const [datasetVersion, setDatasetVersion] = useState(0);
 
   useEffect(() => {
     const source = DATA_SOURCES.find((d) => d.id === dataSourceId) || DATA_SOURCES[0];
+    console.log("[App] Loading dataset", dataSourceId, "from", source.path);
     fetch(source.path)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          console.error("[App] Dataset fetch HTTP error", res.status, res.statusText, {
+            dataSourceId,
+            path: source.path
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         const list = Array.isArray(data.scenarios) ? data.scenarios : [];
+        console.log("[App] Dataset loaded", {
+          dataSourceId,
+          scenarioCount: list.length,
+          rawDataset: data && data.dataset
+        });
         setScenarios(list);
         if (list.length > 0) {
           setSelectedId(list[0].id);
@@ -31,8 +46,10 @@ function App() {
           setSelectedId(null);
         }
         setTimeMs(0);
+        setDatasetVersion((v) => v + 1);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("[App] Failed to load dataset", dataSourceId, "from", source.path, error);
         setScenarios([]);
         setSelectedId(null);
       });
@@ -40,18 +57,22 @@ function App() {
 
   useEffect(() => {
     if (!isPlaying) {
+      console.log("[App] Animation paused", {
+        dataSourceId,
+        scenarioCount: scenarios.length
+      });
       return;
     }
+    console.log("[App] Animation loop starting", {
+      dataSourceId,
+      scenarioCount: scenarios.length
+    });
     let frameId;
     let last = performance.now();
     const loop = (now) => {
       const delta = now - last;
       last = now;
-      // Cap effective update rate at ~60 FPS to avoid unnecessary CPU churn
-      if (delta < 1000 / 75) {
-        frameId = requestAnimationFrame(loop);
-        return;
-      }
+
       setTimeMs((prev) => {
         let total = prev + delta;
         if (total >= ANIMATION_DURATION_MS) {
@@ -77,12 +98,31 @@ function App() {
       if (frameId) {
         cancelAnimationFrame(frameId);
       }
+      console.log("[App] Animation loop stopped", {
+        dataSourceId
+      });
     };
   }, [isPlaying, scenarios]);
+
+  useEffect(() => {
+    if (!selectedId) {
+      console.log("[App] No scenario selected for dataset", dataSourceId);
+      return;
+    }
+    console.log("[App] Selected scenario changed", {
+      dataSourceId,
+      selectedId
+    });
+  }, [selectedId, dataSourceId]);
 
   const activeScenario = scenarios.find((s) => s.id === selectedId) || null;
 
   const handleSelectScenario = (id) => {
+    console.log("[App] Scenario clicked in UI", {
+      previousSelectedId: selectedId,
+      nextSelectedId: id,
+      dataSourceId
+    });
     setSelectedId(id);
     setTimeMs(0);
   };
@@ -95,6 +135,7 @@ function App() {
         durationMs={ANIMATION_DURATION_MS}
         zoomBias={zoomBias}
         datasetId={dataSourceId}
+        datasetVersion={datasetVersion}
       />
       <ScenarioControls
         scenarios={scenarios}
