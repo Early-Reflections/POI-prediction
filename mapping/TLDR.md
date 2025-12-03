@@ -70,9 +70,9 @@ predicted POIs.
 ## Video 
 
 ```bash
-ffmpeg -i input.mp4 \
+ffmpeg -i tokyoPOI-raw.webm \
   -vf "scale=-2:1080" \
-  -c:v libx264 -preset slow -crf 18 \
+  -c:v libx264 -preset slow -crf 15 \
   -c:a aac -b:a 160k \
-  output_1080p.mp4
+  output_1080p-m.mp4
 ```
